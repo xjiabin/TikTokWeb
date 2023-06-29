@@ -1,388 +1,304 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="referrer" content="never">
-    <meta name="description" content="download douyin video images without water mesk">
-    <link rel="stylesheet" href="../static/stylesheets/milligram.min.css">
-    <link rel="stylesheet" href="../static/stylesheets/progress.css">
-    <link rel='stylesheet' href='../static/stylesheets/unicons.css'>
-    <link rel="shortcut icon" href="../static/images/favicon.ico" type="image/x-icon">
-    <link rel="apple-touch-icon" href="../static/images/favicon.ico">
-    <style>
-        body {
-            padding: 0;
-            min-width: 70%;
-            font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-        }
-
-        .tk{
-            width: 40%;
-            margin: 0 auto;
-        }
-
-        .video_play{
-            min-width: 0;
-            flex: 1 1 auto;
-            position: relative;
-        }
-
-        .card {
-            position: relative;
-            display: -webkit-box;
-            display: -ms-flexbox;
-            display: flex;
-            -webkit-box-orient: vertical;
-            -webkit-box-direction: normal;
-            -ms-flex-direction: column;
-            flex-direction: column;
-            min-width: 0;
-            word-wrap: break-word;
-            background-color: #fff;
-            background-clip: border-box;
-            border: 1px solid rgba(0,0,0,.125);
-            border-radius: 1rem
-        }
-
-        .card-body {
-            -webkit-box-flex: 1;
-            -ms-flex: 1 1 auto;
-            flex: 1 1 auto;
-            padding: 1.25rem
-        }
-
-        .card-header:first-child {
-            border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0
-        }
-
-        .card-header+.list-group .list-group-item:first-child {
-            border-top: 0
-        }
-
-        img {
-            height: auto;
-            width: 100%;
-        }
-    </style>
-    <script src="../static/javascripts/jquery.min.js"></script>
-    <script src="../static/javascripts/jquery.cookie.min.js"></script>
-    <script src="../static/javascripts/jszip.min.js"></script>
-    <script src="../static/javascripts/FileSaver.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            $('#setcookie').click(function(){
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="never">
+        <meta name="description" content="download douyin video images without water mesk">
+        <title>TikTokWeb</title>
+        <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
+        <link rel="apple-touch-icon" href="../static/img/favicon.ico">
+        <link rel="stylesheet" href="../static/css/milligram.min.css">
+        <style>body{padding:0;min-width:70%;font:14px "Lucida Grande",Helvetica,Arial,sans-serif}.tk{width:98%;max-width:580px;margin:0 auto}.video_play{min-width:0;-webkit-box-flex:1;-ms-flex:1 1 auto;flex:1 1 auto;position:relative}.card{position:relative;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-ms-flex-direction:column;flex-direction:column;min-width:0;word-wrap:break-word;background-color:#fff;background-clip:border-box;border:1px solid rgba(0,0,0,.125);border-radius:1rem}.card-body{-webkit-box-flex:1;-ms-flex:1 1 auto;flex:1 1 auto;padding:1.25rem}.card-header:first-child{border-radius:calc(.25rem - 1px) calc(.25rem - 1px) 0 0}.card-header+.list-group .list-group-item:first-child{border-top:0}img{height:auto;width:100%}</style>
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/js/jquery.cookie.min.js"></script>
+        <script src="../static/js/jszip.min.js"></script>
+        <script src="../static/js/FileSaver.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('#setcookie').click(function(){
                     if($('#cookieform').is(':hidden')){
                         $('#cookieform').show();
                     } else {
                         $('#cookieform').hide();
                     }
-                })
-            try {
-                let seachTxt = window.location.href.split("=");
-                seachTxt = decodeURI(seachTxt [1])
-                if (seachTxt === 'undefined'){
-                    $('#video_info').hide();
-                } else {
-                    //解码url
-                    $("#video_url").attr('value',seachTxt)
-                    $('#video_info').show();
+                });
+                try {
+                    let seachTxt = window.location.href.split("=");
+                    seachTxt = decodeURI(seachTxt [1]);
+                    if (seachTxt === 'undefined'){
+                        $('#video_info').hide();
+                    } else {
+                        //解码url
+                        $("#video_url").attr('value',seachTxt);
+                        $('#video_info').show();
+                        return 0;
+                    }
+                } catch (error) {
                     return 0;
                 }
-            } catch (error) {
-                return 0;
-            }
-        });
-    </script>
-    <script>
-        $(document).ready(function(){
-            if (!$.cookie('dycookie')){
-                alert('请先填写抖音的cookie才可以正常解析作品')
-            } else {
-                var dycookie = JSON.parse($.cookie('dycookie'));
-                $('#odin_tt_Field').val(dycookie['odin_tt'])
-                $('#passport_csrf_token_Field').val(dycookie['passport_csrf_token'])
-                $('#sessionid_ss_Field').val(dycookie['sessionid_ss'])
-                $('#ttwid_Field').val(dycookie['ttwid'])
-                $('#msToken_Field').val(dycookie['msToken'])
-            }
-        });
-    </script>
-    <title>TikTokWeb</title>
-</head>
-<body class="bs-docs-home">
-<div class="col-md-8">
-    <div class="tk">
-        <h1>TikTokWeb</h1>
-        <blockquote>
-            <p><em>先填写你的抖音cookie，然后输入长短链点击解析试试吧🎉！</em></p>
-        </blockquote>
-        <div class="input-group input-group-lg" style="margin-bottom: 10px;">
-            <input type="text" class="form-control link-input" name="请输入链接" value="https://v.douyin.com/NKyY6Ch/" id="video_url">
-            <div class="input-group-btn">
-                <div class="btn-clear" id="btn-clear">
-                    <button class="btn btn-default" type="button" value="解析" id="get">解析</button>
-                    <button class="button button-clear" type="submit" value="设置Cookie" id="setcookie">设置Cookie</button>
-                </div>
-            </div>
-        </div>
-        <form style="display: none;" id="cookieform">
-            <fieldset>
-                <ul>
-                    <li>
-                        只需填写cookie的value，不需要填写key 😀
-                    </li>
-                    <li>
-                        例如 odin_tt的值是718d2ae9ed49a5fd4fc1…………只需要填这部分即可 🥴
-                    </li>
-                    <li>
-                        你的所有信息均储存在本地 🚨
-                    </li>
-                </ul>
-                <pre class="savesuccess" style="display: none;"><code>保存成功</code></pre>
-                <pre class="saveerror" style="display: none;"><code>保存失败</code></pre>
-                <label for="odin_tt_Field">odin_tt</label>
-                <input type="text" placeholder="odin_tt的值" id="odin_tt_Field">
-                <label for="passport_csrf_token_Field">passport_csrf_token</label>
-                <input type="text" placeholder="passport_csrf_token的值" id="passport_csrf_token_Field">
-                <label for="sessionid_ss_Field">sessionid_ss</label>
-                <input type="text" placeholder="sessionid_ss的值" id="sessionid_ss_Field">
-                <label for="ttwid_Field">ttwid</label>
-                <input type="text" placeholder="ttwid的值" id="ttwid_Field">
-                <label for="msToken_Field">msToken</label>
-                <input type="text" placeholder="msToken的值" id="msToken_Field">
-                <button class="btn btn-default" type="button" value="保存" id="savecookie">保存</button>
-                <button class="btn btn-default" type="button" value="清理" id="cleancookie">清理</button>
-            </fieldset>
-        </form>
-        <div style="display: none;" id="video_info">
-            <span>
-                <div class="card">
-                    <div class="card-body">
-                        <div class="container">
-                                <table style="overflow: auto;">
-                                    <tr align="center">
-                                        <td>
-                                            <% if (data.type=='图集'){%>
-                                            <div class="images_play">
-                                                <% for (var i = 0;i<data.images.length;i++) { %>
-                                                    <img alt="<%- data.desc %>"crossorigin="anonymous" src="<%- data.images[i] %>">
-                                                <%}%>
-                                            </div>
-                                            <%} else {%>
-                                            <div class="video_play">
-                                                <!--
-                                                <video id="play" preload="auto" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/396624/err.mp4" autoplay muted loop></video>
-                                                -->
-                                                <video controls autoplay width="50%" controls="controls" id="play" preload="auto" type="video/mp4" webkit-playsinline="true" playsinline="" x5-video-player-type="h5" x5-video-player-fullscreen="portraint">
-                                                    <source src="<%= data.url %>" type="video/mp4">
-                                                </video>
-                                            </div>
-                                            <%}%>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                        <div class="row">
-                                            <table align="center" style="width: 400px;">
-                                                <tr align="right">
-                                                    <td style="width: 160px;"><span class="column">类型</span></td>
-                                                    <td><span class="column" id="type" style="text-align: center;display: block;"><%= data.type %></span></td>
-                                                </tr>
-                                                <tr align="right">
-                                                    <td style="width: 160px;"><span class="column">文案</span></td>
-                                                    <td><span class="column" id="desc" style="text-align: center;display: block;"><%= data.desc %></span></td>
-                                                </tr>
-                                                <tr align="right">
-                                                    <td style="width: 160px;"><span class="column">抖音ID</span></td>
-                                                    <td><span class="column" id="unique_id" style="text-align: center;display: block;"><%= data.unique_id %></span></td>
-                                                </tr>
-                                                <tr align="right">
-                                                    <td style="width: 160px;"><span class="column">视频ID</span></td>
-                                                    <td><span class="column" id="video_id" style="text-align: center;display: block;"><%= data.video_id %></span></td>
-                                                </tr>
-                                                <tr align="right">
-                                                    <td style="width: 160px;"><span class="column">主页</span></td>
-                                                    <td><a class="column" id="userhome" target="_blank" href="<%= data.userhome %>" style="text-align: center;display: block;"><%= data.nickname %></a></td>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                        </td>
-                                    </tr>
-                                    <tr align="center">
-                                        <td align="center">
-                                                <% if (data.type=='图集'){%>
-                                                <button type='button' id="download" style="color: white;" rel="noreferrer" onclick="downloadall();">
-                                                    下载所有
-                                                </button>
-                                                <%} else { %>
-                                                <button type='button' id="download">
-                                                    <a target="_blank" style="color: white;" rel="noreferrer" href="<%= data.url %>" download="<%= data.desc %>.mp4">
-                                                    下载视频
-                                                    </a>
-                                                </button>
-                                                <% }%>
-                                            </button>
-                                            &nbsp;&nbsp;&nbsp;
-                                            <button id="download">
-                                                <a target="_blank" style="color: white;" rel="noreferrer" href="<%= data.music %>" download="<%= data.m_title %>.mp3">
-                                                    <% if(data.music=='') {%>该原声不可用<%} else {%>下载原声<%} %>
-                                                </a>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
+            });
+        </script>
+        <script>
+            $(document).ready(function(){
+                if (!$.cookie('dycookie')){
+                    alert('请先填写抖音的cookie才可以正常解析作品')
+                } else {
+                    var dycookie = JSON.parse($.cookie('dycookie'));
+                    $('#odin_tt_Field').val(dycookie['odin_tt'])
+                    $('#passport_csrf_token_Field').val(dycookie['passport_csrf_token'])
+                    $('#sessionid_ss_Field').val(dycookie['sessionid_ss'])
+                    $('#ttwid_Field').val(dycookie['ttwid'])
+                    $('#msToken_Field').val(dycookie['msToken'])
+                }
+            });
+        </script>
+    </head>
+
+    <body class="bs-docs-home">
+        <div class="col-md-8">
+            <div class="tk">
+                <!-- <h1>TikTokWeb</h1> -->
+                <blockquote><p><em>先填写你的抖音cookie，然后输入长短链点击解析试试吧🎉！</em></p></blockquote>
+                <div class="input-group input-group-lg" style="margin-bottom: 10px;">
+                    <input type="text" class="form-control link-input" name="请输入链接" value="" id="video_url">
+                    <div class="input-group-btn">
+                        <div class="btn-clear" id="btn-clear">
+                            <button class="btn btn-default" type="button" value="解析" id="get">解析</button>
+                            <button class="button button-clear" type="submit" value="设置Cookie" id="setcookie">设置Cookie</button>
                         </div>
                     </div>
                 </div>
-            </span>
-            <footer>
-                <span style="text-align: center;display: block;padding: 20px;">
-                <a target="_blank" style="color: #9b4dca;" rel="noreferrer" href="https://github.com/Johnserf-Seed/TikTokWeb">
-                            GitHub · JohnserfSeed · 2023
-                </a>
-                </span>
-            </footer>
+                <form style="display: none;" id="cookieform">
+                    <fieldset>
+                        <ul>
+                            <li>
+                                只需填写cookie的value，不需要填写key 😀
+                            </li>
+                            <li>
+                                例如 odin_tt的值是718d2ae9ed49a5fd4fc1…………只需要填这部分即可 🥴
+                            </li>
+                            <li>
+                                你的所有信息均储存在本地 🚨
+                            </li>
+                        </ul>
+                        <pre class="savesuccess" style="display: none;"><code>保存成功</code></pre>
+                        <pre class="saveerror" style="display: none;"><code>保存失败</code></pre>
+                        <label for="odin_tt_Field">odin_tt</label>
+                        <input type="text" placeholder="odin_tt的值" id="odin_tt_Field">
+                        <label for="passport_csrf_token_Field">passport_csrf_token</label>
+                        <input type="text" placeholder="passport_csrf_token的值" id="passport_csrf_token_Field">
+                        <label for="sessionid_ss_Field">sessionid_ss</label>
+                        <input type="text" placeholder="sessionid_ss的值" id="sessionid_ss_Field">
+                        <label for="ttwid_Field">ttwid</label>
+                        <input type="text" placeholder="ttwid的值" id="ttwid_Field">
+                        <label for="msToken_Field">msToken</label>
+                        <input type="text" placeholder="msToken的值" id="msToken_Field">
+                        <button class="btn btn-default" type="button" value="保存" id="savecookie">保存</button>
+                        <button class="btn btn-default" type="button" value="清理" id="cleancookie">清理</button>
+                    </fieldset>
+                </form>
+                <div style="display: none;" id="video_info">
+                    <span>
+                        <div class="card">
+                            <div class="card-body">
+                                <table style="overflow-y:auto;">
+                                    <tbody>
+                                        <tr align="center">
+                                            <td colspan="2">
+                                                <% if (data.type=='图集'){%>
+                                                <div class="images_play">
+                                                    <% for (var i = 0;i<data.images.length;i++) { %>
+                                                        <img alt="<%- data.desc %>"crossorigin="anonymous" src="<%- data.images[i] %>">
+                                                    <%}%>
+                                                </div>
+                                                <%} else {%>
+                                                <div class="video_play">
+                                                    <video controls width="50%" controls="controls" id="play" preload="auto" type="video/mp4" poster="<%= data.cover %>" webkit-playsinline="true" playsinline="" x5-video-player-type="h5" x5-video-player-fullscreen="portraint" style="max-height:130px;">
+                                                        <source src="<%= data.url %>" type="video/mp4">
+                                                    </video>
+                                                </div>
+                                                <%}%>
+                                            </td>
+                                        </tr>
+                                        <tr align="right">
+                                            <td width="80px;"><span class="column">类型</span></td>
+                                            <td><span class="column" id="type" style="text-align: center;display: block;"><%= data.type %></span></td>
+                                        </tr>
+                                        <tr align="right">
+                                            <td width="80px;"><span class="column">文案</span></td>
+                                            <td><span class="column" id="desc" style="text-align: center;display: block;"><%= data.desc %></span></td>
+                                        </tr>
+                                        <tr align="right">
+                                            <td width="80px;"><span class="column">抖音ID</span></td>
+                                            <td><span class="column" id="unique_id" style="text-align: center;display: block;"><%= data.unique_id %></span></td>
+                                        </tr>
+                                        <tr align="right">
+                                            <td width="80px;"><span class="column">视频ID</span></td>
+                                            <td><span class="column" id="video_id" style="text-align: center;display: block;"><%= data.video_id %></span></td>
+                                        </tr>
+                                        <tr align="right">
+                                            <td width="80px;"><span class="column">主页</span></td>
+                                            <td><a class="column" id="userhome" target="_blank" href="<%= data.userhome %>" style="text-align: center;display: block;"><%= data.nickname %></a></td>
+                                        </tr>
+                                        <tr align="center">
+                                            <td align="center" colspan="2">
+                                                    <% if (data.type=='图集'){%>
+                                                    <button class="download-button" style="color: white;" rel="noreferrer" onclick="downloadall();">
+                                                        下载所有
+                                                    </button>
+                                                    <%} else { %>
+                                                    <button class="download-button">
+                                                        <a target="_blank" style="color: white;" rel="noreferrer" href="<%= data.url %>" download="<%= data.desc %>.mp4">
+                                                        下载视频
+                                                        </a>
+                                                    </button>
+                                                    <% }%>
+                                                </button>
+                                                &nbsp;&nbsp;&nbsp;
+                                                <button class="download-button">
+                                                    <a target="_blank" style="color: white;" rel="noreferrer" href="<%= data.music %>" download="<%= data.m_title %>.mp3">
+                                                        <% if(data.music=='') {%>该原声不可用<%} else {%>下载原声<%} %>
+                                                    </a>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </span>
+                </div>
+            </div>
         </div>
-        <!-- 回到顶部-->
-        <div class="progress-wrap">
-            <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
-                <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98"/>
-            </svg>
-        </div>
-    </div>
-</div>
-<script>
-    //图片转base64; 传入图片路径，返回base64
-    function getBase64(img,index) {
-        function getBase64Image(img, width, height) {
-            var canvas = document.createElement("canvas");
-            canvas.width = width ? width : img.width;
-            canvas.height = height ? height : img.height;
-            var ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            var dataURL = canvas.toDataURL();
-            return dataURL;
-        }
-        var image = new Image();
-        image.crossOrigin = 'Anonymous';
-        image.src = img;
-        /*
-        * deferred对象是一个延迟对象，意思是函数延迟到某个点才开始执行，改变执行状态的方法有两个（成功：resolve和失败：reject），
-        * 分别对应两种执行回调（成功回调函数：done和失败回调函数fail）
-        * */
-        var deferred = $.Deferred();
-        if (img) {
-            image.onload = function () {
-                // 执行成功回调
-                deferred.resolve(getBase64Image(image),index);
-            }
-            return deferred.promise();
-        }
-    }
-</script>
-
-<script>
-    var zip = new JSZip();
-    // 下载所有图片
-    function downloadall() {
-        var strimage = '<%- data.images %>'
-        var desc = '<%- data.desc %>'
-        var images = [];
-        var imgBase64 = {};
-        images  = strimage.split(',')
-        // 压缩包文件夹
-        var folder = zip.folder(desc);
-        // 读取所有图片返回base64
-        for (var i = 0; i < images.length; i++) {
-            getBase64(images[i],i).then(function (base64,index) {
-                //imgBase64.push(base64.substring(22));  // 去掉base64的图片格式前缀
-                imgBase64[index] = base64.substring(22);
-            }, function (err) {
-                console.log(err);
-            });
-        };
-        // 发送下载
-        function downloadZip() {
-            setTimeout(function () {
-                if (images.length == Object.keys(imgBase64).length) {
-                    for (var i = 0; i < images.length; i++) {
-                        folder.file(desc + i + ".jpg", imgBase64[i], { base64: true });
-                    }
-                    zip.generateAsync({ type: "blob" }).then(function (content) {
-                        saveAs(content, desc + ".zip"); // zip包命名并下载
-                    });
-                } else {
-                    downloadZip();
+        <script>
+            //图片转base64; 传入图片路径，返回base64
+            function getBase64(img,index) {
+                function getBase64Image(img, width, height) {
+                    var canvas = document.createElement("canvas");
+                    canvas.width = width ? width : img.width;
+                    canvas.height = height ? height : img.height;
+                    var ctx = canvas.getContext("2d");
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    var dataURL = canvas.toDataURL();
+                    return dataURL;
                 }
-            }, 100);
-        };
-        downloadZip();
-    };
-</script>
-<script>
-    $("#get").click(function(){
-        if (!$.cookie('dycookie')){
-            alert('请先填写抖音的cookie才可以正常解析作品')
-            return 0;
-        }
-        let url = $('#video_url').val()
-        if (!url){
-            alert("空链接");
-            return 0;
-        }
-        let regexp = /((http|https):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig;
-        // let urlReg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g //第二种
-        let this_url = url.match(regexp)
-        if(this_url === ''){
-            alert('请填写正确分享链接或内容');
-            return 0;
-        }
-        window.location.href = "/api?url=" + this_url;
-    });
-</script>
-<script>
+                var image = new Image();
+                image.crossOrigin = 'Anonymous';
+                image.src = img;
+                /*
+                * deferred对象是一个延迟对象，意思是函数延迟到某个点才开始执行，改变执行状态的方法有两个（成功：resolve和失败：reject），
+                * 分别对应两种执行回调（成功回调函数：done和失败回调函数fail）
+                * */
+                var deferred = $.Deferred();
+                if (img) {
+                    image.onload = function () {
+                        // 执行成功回调
+                        deferred.resolve(getBase64Image(image),index);
+                    }
+                    return deferred.promise();
+                }
+            }
+        </script>
 
-    $("#savecookie").click(function(){
-        const dycookie = {
-            odin_tt:$('#odin_tt_Field').val(),
-            passport_csrf_token: $('#passport_csrf_token_Field').val(),
-            sessionid_ss: $('#sessionid_ss_Field').val(),
-            ttwid: $('#ttwid_Field').val(),
-            msToken: $('#msToken_Field').val(),
-        };
-        //var cookie = 'dycookie' + "=" + JSON.stringify(dycookie) + '; max-age=' + 30 * 24 * 60 * 60;
-        try {
-            $.cookie('dycookie', JSON.stringify(dycookie), { expires: 30 });
-            //document.cookie = cookie;
-            //localStorage.setItem("dycookie", JSON.stringify(dycookie));
-            alert('保存成功')
-            $('#cookieform').hide();
-        } catch {
-            alert('保存失败')
-            $('#cookieform').hide();
-        }
-    });
-    $("#cleancookie").click(function(){
-        try {
-            $.removeCookie('dycookie',{ path: '/'});
-            $('#odin_tt_Field').val('')
-            $('#passport_csrf_token_Field').val('')
-            $('#sessionid_ss_Field').val('')
-            $('#ttwid_Field').val('')
-            $('#msToken_Field').val('')
-            //localStorage.removeItem("dycookie");
-            alert('清理成功')
-            $('#cookieform').hide();
-        } catch (error) {
-            alert('清理失败')
-            console.log(error)
-            $('#cookieform').hide();
-        }
-    });
-    </script>
-    <script src="../static/javascripts/progress.js"></script>
-</body>
+        <script>
+            var zip = new JSZip();
+            // 下载所有图片
+            function downloadall() {
+                var strimage = '<%- data.images %>'
+                var desc = '<%- data.desc %>'
+                var images = [];
+                var imgBase64 = {};
+                images  = strimage.split(',')
+                // 压缩包文件夹
+                var folder = zip.folder(desc);
+                // 读取所有图片返回base64
+                for (var i = 0; i < images.length; i++) {
+                    getBase64(images[i],i).then(function (base64,index) {
+                        //imgBase64.push(base64.substring(22));  // 去掉base64的图片格式前缀
+                        imgBase64[index] = base64.substring(22);
+                    }, function (err) {
+                        console.log(err);
+                    });
+                };
+                // 发送下载
+                function downloadZip() {
+                    setTimeout(function () {
+                        if (images.length == Object.keys(imgBase64).length) {
+                            for (var i = 0; i < images.length; i++) {
+                                folder.file(desc + i + ".jpg", imgBase64[i], { base64: true });
+                            }
+                            zip.generateAsync({ type: "blob" }).then(function (content) {
+                                saveAs(content, desc + ".zip"); // zip包命名并下载
+                            });
+                        } else {
+                            downloadZip();
+                        }
+                    }, 100);
+                };
+                downloadZip();
+            };
+        </script>
+        <script>
+            $("#get").click(function() {
+                if (!$.cookie('dycookie')){
+                    // alert('请先填写抖音的cookie才可以正常解析作品')
+                    // return 0;
+                }
+                let url = $('#video_url').val()
+                if (!url){
+                    alert("空链接");
+                    return 0;
+                }
+                let regexp = /((http|https):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig;
+                // let urlReg = /(http:\/\/|https:\/\/)((\w|=|\?|\.|\/|&|-)+)/g //第二种
+                let this_url = url.match(regexp)
+                if(this_url === ''){
+                    alert('请填写正确分享链接或内容');
+                    return 0;
+                }
+                window.location.href = "/api?url=" + this_url;
+            });
+        </script>
+        <script>
+            $("#savecookie").click(function(){
+                const dycookie = {
+                    odin_tt:$('#odin_tt_Field').val(),
+                    passport_csrf_token: $('#passport_csrf_token_Field').val(),
+                    sessionid_ss: $('#sessionid_ss_Field').val(),
+                    ttwid: $('#ttwid_Field').val(),
+                    msToken: $('#msToken_Field').val(),
+                };
+                //var cookie = 'dycookie' + "=" + JSON.stringify(dycookie) + '; max-age=' + 30 * 24 * 60 * 60;
+                try {
+                    $.cookie('dycookie', JSON.stringify(dycookie), { expires: 30 });
+                    //document.cookie = cookie;
+                    //localStorage.setItem("dycookie", JSON.stringify(dycookie));
+                    alert('保存成功')
+                    $('#cookieform').hide();
+                } catch {
+                    alert('保存失败')
+                    $('#cookieform').hide();
+                }
+            });
+            $("#cleancookie").click(function(){
+                try {
+                    $.removeCookie('dycookie',{ path: '/'});
+                    $('#odin_tt_Field').val('')
+                    $('#passport_csrf_token_Field').val('')
+                    $('#sessionid_ss_Field').val('')
+                    $('#ttwid_Field').val('')
+                    $('#msToken_Field').val('')
+                    //localStorage.removeItem("dycookie");
+                    alert('清理成功')
+                    $('#cookieform').hide();
+                } catch (error) {
+                    alert('清理失败')
+                    console.log(error)
+                    $('#cookieform').hide();
+                }
+            });
+        </script>
+    </body>
 </html>
