@@ -1,6 +1,7 @@
-let express = require('express');
+const express = require('express');
 const axios = require('axios');
-const res = require('express/lib/response');
+const { DYCOOKIE } = require('../config/const');
+
 const errwin = /[\\\n\r/:*?\"<>|]/g;
 const subwin = ``;
 const httpurl = /^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$/;
@@ -140,13 +141,7 @@ router.get('/', async function (req, res, next) {
     console.log(dycookie);
 
     if (dycookie == undefined) {
-      dycookie = {
-        odin_tt: '5b44bc1917b3c9dbeb22c5421e9045cb66ba69350688c40dd31eb0abe30de84bf5955b0c5afa91349c5087af762519d0',
-        passport_csrf_token: '571cd5fe5563fea20e9c6294efbb7eba',
-        sessionid_ss: '453150100a789455260b476ca29ab907',
-        ttwid: '1%7CfbElSNCaIB87pCreNiG-IlX1HFTmH3MecM4XZckbxxI%7C1678925357%7Cd1c31c574371fb03b97ee48dd6e0ff7bbc079beedab2a83a8bec5994e51ffbde',
-        msToken: 'uTa38b9QFHB6JtEDzH9S4np17qxpG6OrROHQ8at2cBpoKfUb0UWmTkjCSpf72EcUrJgWTIoN6UgAv5BTXtCbOAhJcIRKyZIT7TMYapeOSpf'
-      };
+      dycookie = DYCOOKIE;
 
       // var data = ({
       //     work:false
